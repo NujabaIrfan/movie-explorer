@@ -16,14 +16,13 @@ export default function TrailerPlayer({ movieId }: TrailerPlayerProps) {
       try {
         setLoading(true);
         setError(null);
-        
+
         const movieDetails = await getMovieDetails(movieId);
         const trailers = movieDetails.videos?.results || [];
-        
-        // Find the first official YouTube trailer
+
         const trailer = trailers.find(
-          (video: any) => 
-            video.site === 'YouTube' && 
+          (video: any) =>
+            video.site === 'YouTube' &&
             video.type === 'Trailer' &&
             video.official
         );
@@ -40,9 +39,7 @@ export default function TrailerPlayer({ movieId }: TrailerPlayerProps) {
     fetchTrailer();
   }, [movieId]);
 
-  if (loading) return null; // Or return a loading spinner
-  if (error) return null; // Or return an error message
-  if (!trailerKey) return null;
+  if (loading || error || !trailerKey) return null;
 
   return (
     <Box sx={{ mt: 2 }}>
@@ -55,16 +52,23 @@ export default function TrailerPlayer({ movieId }: TrailerPlayerProps) {
           paddingBottom: '56.25%', // 16:9 aspect ratio
           height: 0,
           overflow: 'hidden',
-          borderRadius: 1,
+          borderRadius: '16px',
+          border: '4px solid #000',
+          boxShadow: '8px 8px 0 #ffeb3b, 12px 12px 0 #000',
+          backgroundColor: '#fff8dc',
+          transition: 'transform 0.3s ease',
+          '&:hover': {
+            transform: 'scale(1.02)',
+          },
         }}
       >
         <iframe
           width="100%"
           height="100%"
-          src={`https://www.youtube.com/embed/${trailerKey}?autoplay=0&rel=0`}
+          src={`https://www.youtube.com/embed/${trailerKey}?autoplay=1&mute=1&rel=0`}
           title={`${movieId} Trailer`}
           frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allow="autoplay; encrypted-media; fullscreen"
           allowFullScreen
           style={{
             position: 'absolute',
@@ -72,6 +76,8 @@ export default function TrailerPlayer({ movieId }: TrailerPlayerProps) {
             left: 0,
             width: '100%',
             height: '100%',
+            border: 0,
+            borderRadius: '12px',
           }}
         />
       </Box>

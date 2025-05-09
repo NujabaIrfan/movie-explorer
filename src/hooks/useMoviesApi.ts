@@ -54,16 +54,17 @@ export function useMoviesApi() {
   // Search movies by query
   const search = async (query: string) => {
     if (!query.trim()) {
-      loadTrending();
+      setSearchResults([]);
+      setHasMore(false);
       return;
     }
     setLoading(true);
     setError(null);
     try {
       const data = await searchMovies(query);
-      setSearchResults(data.results); // Replace existing movies with search results
+      setSearchResults(data.results);
       setHasMore(data.results.length > 0);
-      setSearchPage(2); // Start pagination for search results
+      setSearchPage(2);
     } catch (err) {
       setError('Failed to search movies');
       console.error(err);
@@ -71,7 +72,7 @@ export function useMoviesApi() {
       setLoading(false);
     }
   };
-
+  
   // Load more search results with pagination
   const loadMoreSearch = async (query: string) => {
     if (loading) return; // Avoid multiple requests at once

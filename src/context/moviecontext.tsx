@@ -16,16 +16,18 @@ export function MovieProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     localStorage.setItem('favorites', JSON.stringify(favorites));
-  }, [favorites]);
+  }, [favorites]); // Sync favorites with localStorage
 
   const addFavorite = (id: number) => {
     if (!favorites.includes(id)) {
-      setFavorites([...favorites, id]);
+      const updatedFavorites = [...favorites, id];
+      setFavorites(updatedFavorites);
     }
   };
 
   const removeFavorite = (id: number) => {
-    setFavorites(favorites.filter(movieId => movieId !== id));
+    const updatedFavorites = favorites.filter(movieId => movieId !== id);
+    setFavorites(updatedFavorites);
   };
 
   return (

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useMoviesApi } from '../hooks/useMoviesApi';
 import { useMovies } from '../context/moviecontext';
 import MovieGrid from '../components/movies/MovieGrid';
@@ -6,27 +6,37 @@ import { Box, Typography } from '@mui/material';
 import Loading from '../components/Shared/Loading';
 import ErrorMessage from '../components/Shared/ErrorMessage';
 import { Movie } from '../types/movie';
+import { useAuth } from '../context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 export default function FavoritesPage() {
   const { favorites } = useMovies();
   const { getDetails } = useMoviesApi();
+  const { user } = useAuth();
   const [favoriteMovies, setFavoriteMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Memoize the getDetails function to prevent unnecessary changes
+  const stableGetDetails = useCallback(getDetails, []);
+
+  // Memoize favorites array to prevent unnecessary changes
+  const memoizedFavorites = useMemo(() => favorites, [JSON.stringify(favorites)]);
+
   const fetchFavorites = useCallback(async () => {
-    if (favorites.length === 0) {
+    if (memoizedFavorites.length === 0) {
       setFavoriteMovies([]);
       return;
     }
 
     setLoading(true);
     setError(null);
+    
     try {
-      const moviePromises = favorites.map(async (id) => {
-        const data = await getDetails(id);
+      const moviePromises = memoizedFavorites.map(async (id) => {
+        const data = await stableGetDetails(id);
         if (!data) return null;
-        
+
         return {
           id: data.id,
           title: data.title || 'Unknown Title',
@@ -45,11 +55,21 @@ export default function FavoritesPage() {
     } finally {
       setLoading(false);
     }
-  }, [favorites, getDetails]);
+  }, [memoizedFavorites, stableGetDetails]);
 
   useEffect(() => {
-    fetchFavorites();
-  }, [fetchFavorites]);
+    // Only fetch if favorites have actually changed
+    const favoriteIds = favoriteMovies.map(movie => movie.id).sort();
+    const currentIds = memoizedFavorites.sort();
+    
+    if (JSON.stringify(favoriteIds) !== JSON.stringify(currentIds)) {
+      fetchFavorites();
+    }
+  }, [memoizedFavorites, favoriteMovies, fetchFavorites]);
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
 
   if (loading && favoriteMovies.length === 0) return <Loading />;
   if (error) return <ErrorMessage message={error} />;

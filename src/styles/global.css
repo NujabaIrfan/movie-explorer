@@ -1,64 +1,139 @@
 /* Reset and base styles */
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+/* styles.css - Global Background Only */
+
+/* Base Variables */
+:root {
+  --bg-color: #121212;           /* Main dark background */
+  --primary-accent: #4CAF50;     /* Green */
+  --secondary-accent: #FF9800;    /* Orange */
+  --tertiary-accent: #00BCD4;    /* Cyan */
+}
+
+/* Core Background Styles */
+html, body, #root {
+  background-color: var(--bg-color);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Animated Gradient Overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: 
+    radial-gradient(circle at 25% 25%, 
+      rgba(var(--primary-accent-rgb), 0.1) 0%, 
+      transparent 40%),
+    radial-gradient(circle at 75% 75%, 
+      rgba(var(--secondary-accent-rgb), 0.1) 0%, 
+      transparent 45%),
+    radial-gradient(circle at 50% 50%, 
+      rgba(var(--tertiary-accent-rgb), 0.05) 0%, 
+      transparent 50%);
+  background-size: 400% 400%;
+  animation: gradientFlow 15s ease infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Convert colors to RGB format for rgba() */
+:root {
+  --primary-accent-rgb: 76, 175, 80;
+  --secondary-accent-rgb: 255, 152, 0;
+  --tertiary-accent-rgb: 0, 188, 212;
+}
+
+/* Animation */
+@keyframes gradientFlow {
+  0% {
+    background-position: 0% 0%;
   }
-  
-  html, body, #root {
-    height: 100%;
+  50% {
+    background-position: 100% 100%;
   }
-  
-  body {
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+  100% {
+    background-position: 0% 0%;
   }
-  
-  /* Scrollbar styles */
-  ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 4px;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background: #555;
-  }
-  
-  /* Dark mode scrollbars */
-  [data-mui-color-scheme="dark"] ::-webkit-scrollbar-track {
-    background: #333;
-  }
-  
-  [data-mui-color-scheme="dark"] ::-webkit-scrollbar-thumb {
-    background: #666;
-  }
-  
-  /* Image defaults */
-  img {
-    max-width: 100%;
-    display: block;
-  }
-  
-  /* Link styles */
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-  
-  /* Utility classes */
-  .text-center {
-    text-align: center;
-  }
-  
-  .full-height {
-    height: 100%;
-  }
+}
+
+/* Ensure content stays above background */
+#root {
+  position: relative;
+  z-index: 1;
+}
+body {
+  line-height: 1.6; /* Slightly improved line height for readability */
+  -webkit-font-smoothing: antialiased;
+  font-family: 'Rajdhani', sans-serif; /* A modern, slightly techy font */
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 10px; /* Slightly wider for better visibility */
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-track-color, #f1f1f1); /* Use theme variable or default */
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-color, #888); /* Use theme variable or default */
+  border-radius: 5px;
+  border: 2px solid transparent; /* Add a bit of spacing */
+  background-clip: padding-box; /* Make border part of the background for spacing */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover-color, #555); /* Use theme variable or default */
+}
+
+/* Dark mode scrollbars */
+.dark-mode ::-webkit-scrollbar-track {
+  --scrollbar-track-color: #333;
+}
+
+.dark-mode ::-webkit-scrollbar-thumb {
+  --scrollbar-thumb-color: #666;
+  --scrollbar-thumb-hover-color: #888;
+}
+
+/* Image defaults */
+img {
+  max-width: 100%;
+  display: block;
+  height: auto; /* Maintain aspect ratio */
+}
+
+/* Link styles */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s ease-in-out; /* Smooth link color transition */
+}
+
+a:hover {
+  color: var(--primary-color); /* Highlight on hover using primary theme color */
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.full-height {
+  height: 100%;
+}
+
+/* Font Import (Add this to the top of your CSS or in your HTML <head>) */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&display=swap');

@@ -1,4 +1,3 @@
-// In Layout.tsx
 import { Box, Container } from '@mui/material';
 import Header from './Header';
 import Footer from './Footer';
@@ -14,16 +13,26 @@ export default function Layout({ darkMode, setDarkMode }: LayoutProps) {
   const location = useLocation();
 
   useEffect(() => {
-    // This will trigger when route changes
     console.log('Route changed:', location.pathname);
   }, [location]);
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header darkMode={darkMode} setDarkMode={setDarkMode} />
-      <Container component="main" sx={{ py: 3, flexGrow: 1 }}>
-        <Outlet key={location.pathname} /> {/* ← Add key here */}
+      
+      <Container
+        component="main"
+        maxWidth={false} // makes it full width
+        disableGutters // removes default left/right padding
+        sx={{
+          py: 3, // vertical padding
+          px: { xs: 2, sm: 4, md: 6 }, // responsive horizontal padding
+          flexGrow: 1,
+        }}
+      >
+        <Outlet />
       </Container>
+
       <Footer />
     </Box>
   );
